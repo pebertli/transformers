@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/transformerName"
+        android:text="Autobot"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="16sp"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeStepGranularity="1sp"
+        android:maxLines="1"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="3dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <include layout="@layout/layout_criteria" android:id="@+id/strenghtCriteria"/>
+        <include layout="@layout/layout_criteria" android:id="@+id/intelligenceCriteria"/>
+        <include layout="@layout/layout_criteria" android:id="@+id/speedCriteria"/>
+        <include layout="@layout/layout_criteria" android:id="@+id/enduranceCriteria"/>
+        <include layout="@layout/layout_criteria" android:id="@+id/rankCriteria"/>
+        <include layout="@layout/layout_criteria" android:id="@+id/courageCriteria"/>
+        <include layout="@layout/layout_criteria" android:id="@+id/firepowerCriteria"/>
+        <include layout="@layout/layout_criteria" android:id="@+id/skillCriteria"/>
+
+
+    </android.support.v7.widget.LinearLayoutCompat>
+</android.support.v7.widget.LinearLayoutCompat>

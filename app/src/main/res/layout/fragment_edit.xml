@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/cardview_light_background"
+    android:clickable="true"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:id="@+id/editScrollView"
+        android:fillViewport="true"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <LinearLayout android:layout_margin="10dp" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:id="@+id/nameTextView"
+            />
+        <android.support.v7.widget.AppCompatEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:id="@+id/nameEditTextFragment"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Team"
+            android:id="@+id/teamTextView"
+            />
+        <RadioGroup android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/teamRadioGroup"
+            >
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/autobotsRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Autobots"
+                android:checked="true"
+                />
+            <android.support.v7.widget.AppCompatRadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Decepticons"
+                android:id="@+id/decepticonsRadioButton"
+                />
+        </RadioGroup>
+
+            <!-- Strength seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/strength_icon"
+                    android:layout_margin="1dp"
+                    />
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/strengthTextViewFragment"
+                android:text="Strength"
+                />
+
+            </LinearLayout>
+
+
+        <com.pebertli.aequilibrium.utils.BindSeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/strengthSeekBarFragment"
+            android:max="9"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            />
+
+
+            <!-- Intelligence seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/intelligence_icon"
+                    android:layout_margin="1dp"
+                    />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/intelligenceTextViewFragment"
+                    android:text="Intelligence"
+                    />
+        </LinearLayout>
+
+                <com.pebertli.aequilibrium.utils.BindSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="9"
+                    android:id="@+id/intelligenceSeekBarFragment"
+                    android:layout_weight="1"
+                    />
+
+
+            <!-- Speed seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/speed_icon"
+                    android:layout_margin="1dp"
+                    />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/speedTextViewFragment"
+                    android:text="Speed"
+                    />
+            </LinearLayout>
+
+                <com.pebertli.aequilibrium.utils.BindSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="9"
+                    android:id="@+id/speedSeekBarFragment"
+                    android:layout_weight="1"
+                    />
+
+
+
+            <!-- Endurance seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/endurance_icon"
+                    android:layout_margin="1dp"
+                    />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/enduranceTextViewFragment"
+                    android:text="Endurance"
+                    />
+            </LinearLayout>
+
+                <com.pebertli.aequilibrium.utils.BindSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="9"
+                    android:id="@+id/enduranceSeekBarFragment"
+                    android:layout_weight="1"
+                    />
+
+
+
+
+            <!-- Rank seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/rank_icon"
+                    android:layout_margin="1dp"
+                    />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rankTextViewFragment"
+                    android:text="Rank"
+                    />
+            </LinearLayout>
+
+                <com.pebertli.aequilibrium.utils.BindSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="9"
+                    android:id="@+id/rankSeekBarFragment"
+                    android:layout_weight="1"
+                    />
+
+
+            <!-- Courage seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/courage_icon"
+                    android:layout_margin="1dp"
+                    />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/courageTextViewFragment"
+                    android:text="Courage"
+                    />
+            </LinearLayout>
+
+                <com.pebertli.aequilibrium.utils.BindSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="9"
+                    android:id="@+id/courageSeekBarFragment"
+                    android:layout_weight="1"
+                    />
+
+
+
+
+            <!-- Firepower seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/firepower_icon"
+                    android:layout_margin="1dp"
+                    />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/firepowerTextViewFragment"
+                    android:text="Firepower"
+                    />
+            </LinearLayout>
+
+                <com.pebertli.aequilibrium.utils.BindSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="9"
+                    android:id="@+id/firepowerSeekBarFragment"
+                    android:layout_weight="1"
+                    />
+
+
+
+            <!-- Skill seek -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/skill_icon"
+                    android:layout_margin="1dp"
+                    />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/skillTextViewFragment"
+                    android:text="Skill"
+                    />
+            </LinearLayout>
+
+                <com.pebertli.aequilibrium.utils.BindSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="9"
+                    android:id="@+id/skillSeekBarFragment"
+                    android:layout_weight="1"
+                    />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/editButtonsLayout"
+        android:gravity="center"
+        android:layout_weight="7"
+        >
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@null"
+            android:maxWidth="24dp"
+            android:maxHeight="24dp"
+            android:src="@drawable/confirm_icon"
+            android:scaleType="fitCenter"
+            android:id="@+id/confirmButtonFragment"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@null"
+            android:maxWidth="24dp"
+            android:maxHeight="24dp"
+            android:src="@drawable/cancel_icon"
+            android:scaleType="fitCenter"
+            android:id="@+id/cancelButtonFragment"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@null"
+            android:maxWidth="24dp"
+            android:maxHeight="24dp"
+            android:src="@drawable/shuffle_icon"
+            android:scaleType="fitCenter"
+            android:id="@+id/shuffleButtonFragment"
+            />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
