@@ -221,15 +221,4 @@ public class EditFragment extends Fragment
         return m;
     }
 
-
-    @Override
-    public void onStop()
-    {
-        super.onStop();
-        //hide the soft keyboard when finish the fragment
-        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if(imm != null && getView() != null)
-            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-    }
-
 }
