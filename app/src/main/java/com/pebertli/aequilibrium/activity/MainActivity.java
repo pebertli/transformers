@@ -201,14 +201,14 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
      * response from fragment with creation or edition
      */
     @Override
-    public void ConfirmFragment(TransformerModel result, boolean editMode, int indexRow)
+    public void ConfirmFragment(TransformerModel original, TransformerModel result, boolean editMode, int indexRow)
     {
         FragmentManager fm = getSupportFragmentManager();
         if(fm.getBackStackEntryCount() > 0)//there is a editFragment
         {
             if(editMode && result != null)
             {
-                mApi.updateTransformer(result);
+                mApi.updateTransformer(original, result);
             }
             else if(!editMode && result!=null)
             {
@@ -281,14 +281,14 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
      * response from Rest API with a updated transformer
      */
     @Override
-    public void onUpdateResponse(TransformerModel originalModel, int code)
+    public void onUpdateResponse(TransformerModel originalModel, TransformerModel newModel, int code)
     {
         if (code != 500)
         {
             if(originalModel.getTeam().equals("A"))
-                mAdapterAutobots.updateItem(originalModel, originalModel);
+                mAdapterAutobots.updateItem(originalModel, newModel);
             else if(originalModel.getTeam().equals("D"))
-                mAdapterDecepticons.updateItem(originalModel, originalModel);
+                mAdapterDecepticons.updateItem(originalModel, newModel);
 
             //make sure that saves the new list
             //todo SYNC with SQLite

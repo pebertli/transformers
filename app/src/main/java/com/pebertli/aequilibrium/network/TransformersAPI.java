@@ -50,7 +50,7 @@ public class TransformersAPI
     {
         void onCreateResponse(TransformerModel model, int code);
         void onDeleteResponse(TransformerModel model, int code);
-        void onUpdateResponse(TransformerModel originalModel, int code);
+        void onUpdateResponse(TransformerModel originalModel, TransformerModel newModel, int code);
         void onGetResponse(TransformerModel model, int code);
         void onGetResponse(List<TransformerModel> list, int code);
     }
@@ -175,11 +175,11 @@ public class TransformersAPI
         });
     }
 
-public void updateTransformer(final TransformerModel model)
+public void updateTransformer(final TransformerModel originalModel, final TransformerModel newModel)
 {
-    if(model.isValid())
+    if(newModel.isValid())
     {
-        Call<ResponseBody> callUpdate = mService.updateTransFormer(model);
+        Call<ResponseBody> callUpdate = mService.updateTransFormer(newModel);
 
         callUpdate.enqueue(new Callback<ResponseBody>()
         {
@@ -187,14 +187,14 @@ public void updateTransformer(final TransformerModel model)
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
             {
                 if(mListener != null)
-                    mListener.onUpdateResponse(model, response.code());
+                    mListener.onUpdateResponse(originalModel, newModel, response.code());
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t)
             {
                 if(mListener != null)
-                    mListener.onUpdateResponse(model, 500);
+                    mListener.onUpdateResponse(originalModel, null, 500);
             }
         });
     }

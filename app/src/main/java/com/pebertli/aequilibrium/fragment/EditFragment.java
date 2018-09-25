@@ -39,7 +39,7 @@ public class EditFragment extends Fragment
     public interface FinishEditFragment
     {
         void CancelFragment();
-        void ConfirmFragment(TransformerModel result, boolean editMode, int indexRow);
+        void ConfirmFragment(TransformerModel original, TransformerModel result, boolean editMode, int indexRow);
 
     }
 
@@ -122,7 +122,7 @@ public class EditFragment extends Fragment
                 {
                     //can't save if name is empty
                     if(!name.isEmpty())
-                        mListener.ConfirmFragment(gatherTransformModel(), mEditMode, indexRow);
+                        mListener.ConfirmFragment(model, gatherTransformModel(), mEditMode, indexRow);
                     else
                         Toast.makeText(getActivity(), "The name can not be empty", Toast.LENGTH_LONG).show();
                 }
@@ -199,7 +199,7 @@ public class EditFragment extends Fragment
         TransformerModel m;
 
         if(model != null)
-            m = model;
+            m = model.getClone();
         else
             m = new TransformerModel();
 

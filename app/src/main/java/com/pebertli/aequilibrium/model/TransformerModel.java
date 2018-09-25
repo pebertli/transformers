@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Bean for Transformer
  */
-public class TransformerModel implements Serializable, Comparable<TransformerModel>
+public class TransformerModel implements Serializable, Comparable<TransformerModel>, Cloneable
 {
 
     @SerializedName("id")
@@ -334,5 +334,15 @@ public class TransformerModel implements Serializable, Comparable<TransformerMod
     {
 
         return Objects.hash(id, name, team, strength, intelligence, speed, endurance, rank, courage, firepower, skill, team_icon);
+    }
+
+    public TransformerModel getClone() {
+        try {
+            // call clone in Object.
+            return (TransformerModel) super.clone();
+        } catch (CloneNotSupportedException e) {
+            System.out.println (" Cloning not allowed. " );
+            return this;
+        }
     }
 }
