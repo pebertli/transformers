@@ -8,6 +8,10 @@
 
 package com.pebertli.aequilibrium.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
@@ -20,8 +24,17 @@ import java.util.Objects;
 /**
  * Bean for Transformer
  */
+@Entity(indices = {@Index("team")})
 public class TransformerModel implements Serializable, Comparable<TransformerModel>
 {
+    @PrimaryKey(autoGenerate = true)
+    private int surrogateKey;
+
+    private boolean flagInsert = false;
+
+    private boolean flagUpdate = false;
+
+    private boolean flagDelete = false;
 
     @SerializedName("id")
     @Expose
@@ -185,6 +198,46 @@ public class TransformerModel implements Serializable, Comparable<TransformerMod
         this.team_icon = team_icon;
     }
 
+    public int getSurrogateKey()
+    {
+        return surrogateKey;
+    }
+
+    public void setSurrogateKey(int surrogateKey)
+    {
+        this.surrogateKey = surrogateKey;
+    }
+
+    public boolean isFlagInsert()
+    {
+        return flagInsert;
+    }
+
+    public void setFlagInsert(boolean flagInsert)
+    {
+        this.flagInsert = flagInsert;
+    }
+
+    public boolean isFlagUpdate()
+    {
+        return flagUpdate;
+    }
+
+    public void setFlagUpdate(boolean flagUpdate)
+    {
+        this.flagUpdate = flagUpdate;
+    }
+
+    public boolean isFlagDelete()
+    {
+        return flagDelete;
+    }
+
+    public void setFlagDelete(boolean flagDelete)
+    {
+        this.flagDelete = flagDelete;
+    }
+
     /**
      * generate a random values for this transformer
      *
@@ -315,7 +368,8 @@ public class TransformerModel implements Serializable, Comparable<TransformerMod
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransformerModel that = (TransformerModel) o;
-        return strength == that.strength &&
+        return surrogateKey == that.surrogateKey &&
+                strength == that.strength &&
                 intelligence == that.intelligence &&
                 speed == that.speed &&
                 endurance == that.endurance &&
@@ -333,6 +387,6 @@ public class TransformerModel implements Serializable, Comparable<TransformerMod
     public int hashCode()
     {
 
-        return Objects.hash(id, name, team, strength, intelligence, speed, endurance, rank, courage, firepower, skill, team_icon);
+        return Objects.hash(surrogateKey, id, name, team, strength, intelligence, speed, endurance, rank, courage, firepower, skill, team_icon);
     }
 }

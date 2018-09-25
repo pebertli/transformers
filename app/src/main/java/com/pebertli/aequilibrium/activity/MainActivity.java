@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
 ;
+import com.pebertli.aequilibrium.database.TransformersDatabase;
 import com.pebertli.aequilibrium.fragment.EditFragment;
 import com.pebertli.aequilibrium.R;
 import com.pebertli.aequilibrium.network.Session;
@@ -380,6 +381,18 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
         {
             mApi.getAll();
         }
+
+        final TransformerModel model = TransformerModel.randomTransformer("A");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                List<TransformerModel> mm = TransformersDatabase.getDatabase(MainActivity.this).transformerDao().getAll();
+                mAdapterAutobots.setItems(mm);
+
+            }
+        }) .start();
+
 
 
     }
