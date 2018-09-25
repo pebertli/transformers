@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
 ;
+import com.pebertli.aequilibrium.database.TransformerRepository;
 import com.pebertli.aequilibrium.database.TransformersDatabase;
 import com.pebertli.aequilibrium.fragment.EditFragment;
 import com.pebertli.aequilibrium.R;
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Main activity of the app that receives callbacks from Rest API Recyclerview clicks and fragment response
  */
-public class MainActivity extends FragmentActivity implements TransformersAPI.ApiListener, TransformerAdapter.ItemClickListener, EditFragment.FinishEditFragment
+public class MainActivity extends FragmentActivity implements TransformersAPI.ApiListener, TransformerAdapter.ItemClickListener, EditFragment.FinishEditFragment/*, TransformerRepository.LocalDatabaseListener*/
 {
     private TransformerAdapter mAdapterAutobots;
     private TransformerAdapter mAdapterDecepticons;
@@ -47,6 +48,7 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     private RecyclerView mRecyclerViewAutobots;
     private RecyclerView mRecyclerViewDecepticons;
     private EditFragment editFragment;
+    private TransformerRepository mDatabaseRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -82,6 +84,9 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
             //Rest API
             mApi = new TransformersAPI();
             mApi.setApiListener(this);
+
+            mDatabaseRepository = new TransformerRepository(this);
+            //mDatabaseRepository.setListener(this);
 
             //calls the creation fragment
             findViewById(R.id.addImageButton).setOnClickListener(new View.OnClickListener()
@@ -213,7 +218,30 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
             }
             else if(!editMode && result!=null)
             {
+                Long ret = mDatabaseRepository.insert(result);
+                if(ret >=0)
+                    result.setSurrogateKey(ret.intValue());
+
+                if(result.getTeam().equals("A"))
+                {
+                    mAdapterAutobots.addItem(result);
+                    mRecyclerViewAutobots.smoothScrollToPosition(0);
+                }
+                else if(result.getTeam().equals("D"))
+                {
+                    mAdapterDecepticons.addItem(result);
+                    mRecyclerViewDecepticons.smoothScrollToPosition(0);
+                }
+
                 mApi.addTransformer(result);
+
+                //FragmentManager fm = getSupportFragmentManager();
+                if(fm.getBackStackEntryCount() > 0)//there is a editFragment
+                {
+                    //remove it from top
+                    fm.popBackStack();
+                }
+
             }
 
         }
@@ -229,34 +257,40 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
      * response from Rest API with a created transformer
      */
     @Override
-    public void onCreateResponse(TransformerModel model, int code)
+    public void onCreateResponse(TransformerModel originalModel, TransformerModel model, int code)
     {
         if (code != 500)
         {
-            //add on top and scroll to there
+            model.setSurrogateKey(originalModel.getSurrogateKey());
+            mDatabaseRepository.updateWithId(model);
             if(model.getTeam().equals("A"))
-            {
-                mAdapterAutobots.addItem(model);
-                mRecyclerViewAutobots.smoothScrollToPosition(0);
-            }
-            else if(model.getTeam().equals("D"))
-            {
-                mAdapterDecepticons.addItem(model);
-                mRecyclerViewDecepticons.smoothScrollToPosition(0);
-            }
+                mAdapterAutobots.updateItem(originalModel, model);
+            //add on top and scroll to there
+//            if(model.getTeam().equals("A"))
+//            {
+//                mAdapterAutobots.addItem(model);
+//                mRecyclerViewAutobots.smoothScrollToPosition(0);
+//            }
+//            else if(model.getTeam().equals("D"))
+//            {
+//                mAdapterDecepticons.addItem(model);
+//                mRecyclerViewDecepticons.smoothScrollToPosition(0);
+//            }
+
+            //update the local database with the id and team icon received
 
             //make sure that saves the new list
             //todo SYNC with SQLite
-            saveListOnPreferences();
+//            saveListOnPreferences();
         }
 
         //remove the fragment after receives an API response
-        FragmentManager fm = getSupportFragmentManager();
-        if(fm.getBackStackEntryCount() > 0)//there is a editFragment
-        {
-            //remove it from top
-            fm.popBackStack();
-        }
+//        FragmentManager fm = getSupportFragmentManager();
+//        if(fm.getBackStackEntryCount() > 0)//there is a editFragment
+//        {
+//            //remove it from top
+//            fm.popBackStack();
+//        }
     }
 
     /**
@@ -319,23 +353,35 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     @Override
     public void onGetResponse(List<TransformerModel> list, int code)
     {
-        if(list!=null)
+        if (code != 500)
         {
-            List<TransformerModel> autobots = new ArrayList<>();
-            List<TransformerModel> decepticons = new ArrayList<>();
-            //separate on each team
-            for (TransformerModel t: list)
+            if (mDatabaseRepository.insertDiff(list))
             {
-                if(t.getTeam().equals("A"))
-                    autobots.add(t);
-                else if (t.getTeam().equals("D"))
-                    decepticons.add(t);
+                mAdapterAutobots.setItems(mDatabaseRepository.getAutobots());
+                mAdapterDecepticons.setItems(mDatabaseRepository.getDecepticons());
             }
-
-            mAdapterAutobots.setItems(autobots);
-            mAdapterDecepticons.setItems(decepticons);
         }
+
     }
+
+//    @Override
+//    public void onSync(final List<TransformerModel> autobots, final List<TransformerModel> decepticons)
+//    {
+//
+//            runOnUiThread(new Runnable()
+//            {
+//                @Override
+//                public void run()
+//                {
+//                    if(autobots != null && decepticons != null)
+//                    {
+//                        mAdapterAutobots.setItems(autobots);
+//                        mAdapterDecepticons.setItems(decepticons);
+//                    }
+//                }
+//            });
+//
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -357,41 +403,49 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     protected void onStart()
     {
         super.onStart();
-        Gson gson = new Gson();
-
-        String jsonText = Session.getInstance().getSessionStringValue("aList");
-        TransformerModel[] text = gson.fromJson(jsonText, TransformerModel[].class);
-        List<TransformerModel> aList = null;
-        if(text != null)
-            aList = new ArrayList<>(Arrays.asList(text));
-
-        jsonText = Session.getInstance().getSessionStringValue("dList");
-        text = gson.fromJson(jsonText, TransformerModel[].class);
-        List<TransformerModel> dList = null;
-        if(text != null)
-            dList = new ArrayList<>(Arrays.asList(text));
-
-        //if there aren't transformers, try to get from Rest API
-        if((aList!= null && !aList.isEmpty()) || (dList != null  && !dList.isEmpty()))
-        {
-            mAdapterAutobots.setItems(aList);
-            mAdapterDecepticons.setItems(dList);
-        }
-        else
+//        Gson gson = new Gson();
+//
+//        String jsonText = Session.getInstance().getSessionStringValue("aList");
+//        TransformerModel[] text = gson.fromJson(jsonText, TransformerModel[].class);
+//        List<TransformerModel> aList = null;
+//        if(text != null)
+//            aList = new ArrayList<>(Arrays.asList(text));
+//
+//        jsonText = Session.getInstance().getSessionStringValue("dList");
+//        text = gson.fromJson(jsonText, TransformerModel[].class);
+//        List<TransformerModel> dList = null;
+//        if(text != null)
+//            dList = new ArrayList<>(Arrays.asList(text));
+//
+//        //if there aren't transformers, try to get from Rest API
+//        if((aList!= null && !aList.isEmpty()) || (dList != null  && !dList.isEmpty()))
+//        {
+//            mAdapterAutobots.setItems(aList);
+//            mAdapterDecepticons.setItems(dList);
+//        }
+//        else
         {
             mApi.getAll();
         }
 
-        final TransformerModel model = TransformerModel.randomTransformer("A");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+                mAdapterAutobots.setItems(mDatabaseRepository.getAutobots());
+                mAdapterDecepticons.setItems(mDatabaseRepository.getDecepticons());
+//            }
+//        }) .start();
 
-                List<TransformerModel> mm = TransformersDatabase.getDatabase(MainActivity.this).transformerDao().getAll();
-                mAdapterAutobots.setItems(mm);
-
-            }
-        }) .start();
+//        final TransformerModel model = TransformerModel.randomTransformer("A");
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                List<TransformerModel> mm = TransformersDatabase.getDatabase(MainActivity.this).transformerDao().getAll();
+//                mAdapterAutobots.setItems(mm);
+//
+//            }
+//        }) .start();
 
 
 
@@ -424,6 +478,7 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     {
         super.onResume();
     }
+
 
 
 }

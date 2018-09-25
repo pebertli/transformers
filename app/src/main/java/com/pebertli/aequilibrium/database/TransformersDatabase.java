@@ -8,19 +8,22 @@
 
 package com.pebertli.aequilibrium.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.pebertli.aequilibrium.activity.MainActivity;
 import com.pebertli.aequilibrium.dao.TransformerDao;
 import com.pebertli.aequilibrium.model.TransformerModel;
 
 import java.util.List;
 
-@Database(entities = {TransformerModel.class}, version = 2)
+@Database(entities = {TransformerModel.class}, version = 3)
 public abstract class TransformersDatabase extends RoomDatabase
 {
+
     public abstract TransformerDao transformerDao();
     private static TransformersDatabase instance;
 
@@ -36,7 +39,9 @@ public abstract class TransformersDatabase extends RoomDatabase
                             Room.databaseBuilder(context.getApplicationContext(),
                                     TransformersDatabase.class, "transformes_db")
                                     .fallbackToDestructiveMigration()
+                                    .allowMainThreadQueries()
                                     .build();
+
 
                 }
             }
@@ -44,22 +49,5 @@ public abstract class TransformersDatabase extends RoomDatabase
 
         return instance;
     }
-
-    public void insertAsync(final TransformerModel model)
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                model.setFlagInsert(true);
-                instance.transformerDao().insertTransformer(model);
-            }
-        }) .start();
-    }
-
-    public List<TransformerModel> getAll()
-    {
-        return instance.transformerDao().getAll();
-    }
-
 
 }

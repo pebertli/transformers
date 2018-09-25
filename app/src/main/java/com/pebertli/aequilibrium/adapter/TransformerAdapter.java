@@ -164,8 +164,11 @@ public class TransformerAdapter extends RecyclerView.Adapter<TransformerHolder>
 
     public void updateItem(int position, TransformerModel model)
     {
-        mItems.set(position, model);
-        notifyItemChanged(position);
+        if(position >=0)
+        {
+            mItems.set(position, model);
+            notifyItemChanged(position);
+        }
     }
 }
 

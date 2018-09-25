@@ -38,7 +38,7 @@ public class TransformerModel implements Serializable, Comparable<TransformerMod
 
     @SerializedName("id")
     @Expose
-    private String id;
+    private String id = null;
     @SerializedName("name")
     @Expose
     private String name;

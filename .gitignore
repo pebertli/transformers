@@ -34,6 +34,10 @@ captures/
 
 # IntelliJ
 *.iml
+<<<<<<< Updated upstream
+=======
+.idea/
+>>>>>>> Stashed changes
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
@@ -62,4 +66,8 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
+<<<<<<< Updated upstream
 fastlane/readme.md
+=======
+fastlane/readme.md
+>>>>>>> Stashed changes

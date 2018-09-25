@@ -8,6 +8,7 @@
 
 package com.pebertli.aequilibrium.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -23,10 +24,10 @@ import java.util.List;
 public interface TransformerDao
 {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertTransformer(TransformerModel model);
+    public Long insertTransformer(TransformerModel model);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public List<Long> insertTransformers(List<TransformerModel> models);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    public List<Long> insertNewTransformers(List<TransformerModel> models);
 
     @Update
     public void updateTransformer(TransformerModel model);
@@ -42,6 +43,10 @@ public interface TransformerDao
 
     @Query("SELECT * FROM TransformerModel")
     public List<TransformerModel> getAll();
+
+    @Query("SELECT * FROM TransformerModel where id is not null")
+    public List<TransformerModel> getWithId();
+
 
     @Query("SELECT * FROM TransformerModel where team = 'A'")
     public List<TransformerModel> getAutobots();

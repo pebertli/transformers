@@ -48,7 +48,7 @@ public class TransformersAPI
 {
     public interface ApiListener
     {
-        void onCreateResponse(TransformerModel model, int code);
+        void onCreateResponse(TransformerModel originalModel, TransformerModel model, int code);
         void onDeleteResponse(TransformerModel model, int code);
         void onUpdateResponse(TransformerModel originalModel, int code);
         void onGetResponse(TransformerModel model, int code);
@@ -131,7 +131,7 @@ public class TransformersAPI
     {
         if(!model.isValid() && mListener != null)
         {
-                mListener.onCreateResponse(null, 500);
+                mListener.onCreateResponse(null, null, 500);
         }
         Call<TransformerModel> callPost = mService.createTransformer(model);
 
@@ -141,14 +141,14 @@ public class TransformersAPI
             public void onResponse(Call<TransformerModel> call, Response<TransformerModel> response)
             {
                 if(mListener != null)
-                    mListener.onCreateResponse(response.body(), response.code());
+                    mListener.onCreateResponse(model, response.body(), response.code());
             }
 
             @Override
             public void onFailure(Call<TransformerModel> call, Throwable t)
             {
                 if(mListener != null)
-                    mListener.onCreateResponse(null, 500);
+                    mListener.onCreateResponse(null,null, 500);
             }
         });
     }
