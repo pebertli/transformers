@@ -59,7 +59,7 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
 
             //hardcoded the auth token
             Session.getInstance().init(this);
-            Session.getInstance().setSessionStringValue("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFuc2Zvcm1lcnNJZCI6Ii1MTWdhOExnLVJVMnpJWXVpUE5JIiwiaWF0IjoxNTM3MjcyNzQ3fQ.oZJ_dQKY_nPPFrbqpCDJR6Y1X49cXdU4Jbgv2NyvEWM");
+            Session.getInstance().setSessionStringValue("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFuc2Zvcm1lcnNJZCI6Ii1MTkdmN0JzQmVMUkJERnIyMEVBIiwiaWF0IjoxNTM3ODk0ODEwfQ.jG7UW5vIwEvFpzzVtRL_VmCsBPhglDVZmvxBXUM6y4E");
 
             //create the recyclers and adapters
             mRecyclerViewAutobots = findViewById(R.id.autobotsRecycler);
@@ -214,6 +214,17 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
         {
             if(editMode && result != null)
             {
+                mDatabaseRepository.update(result);
+
+                if(result.getTeam().equals("A"))
+                {
+                    mAdapterAutobots.updateItem(indexRow, result);
+                }
+                else if(result.getTeam().equals("D"))
+                {
+                    mAdapterDecepticons.updateItem(indexRow, result);
+                }
+
                 mApi.updateTransformer(result);
             }
             else if(!editMode && result!=null)
@@ -235,14 +246,17 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
 
                 mApi.addTransformer(result);
 
-                //FragmentManager fm = getSupportFragmentManager();
-                if(fm.getBackStackEntryCount() > 0)//there is a editFragment
-                {
-                    //remove it from top
-                    fm.popBackStack();
-                }
+//                //FragmentManager fm = getSupportFragmentManager();
+//                if(fm.getBackStackEntryCount() > 0)//there is a editFragment
+//                {
+//                    //remove it from top
+//                    fm.popBackStack();
+//                }
 
             }
+
+            //remove it from top
+            fm.popBackStack();
 
         }
         else

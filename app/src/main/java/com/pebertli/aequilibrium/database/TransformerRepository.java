@@ -54,6 +54,22 @@ public class TransformerRepository
         TransformersDatabase.getDatabase(mContext).transformerDao().updateTransformer(model);
     }
 
+    public void update(final TransformerModel model)
+    {
+        if(model.getId() != null && !model.getId().isEmpty())
+        {
+            model.setFlagInsert(false);
+            model.setFlagUpdate(true);
+        }
+        else
+        {
+            model.setFlagInsert(true);
+            model.setFlagUpdate(false);
+        }
+
+        TransformersDatabase.getDatabase(mContext).transformerDao().updateTransformer(model);
+    }
+
     public void insertNewAsync(final List<TransformerModel> models)
     {
 
