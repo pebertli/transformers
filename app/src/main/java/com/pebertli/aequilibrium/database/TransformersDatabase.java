@@ -26,28 +26,54 @@ public abstract class TransformersDatabase extends RoomDatabase
 
     public abstract TransformerDao transformerDao();
     private static TransformersDatabase instance;
+    private static TransformersDatabase instanceTest;
 
-    public static TransformersDatabase getDatabase(final Context context)
+    public static TransformersDatabase getDatabase(final Context context, boolean test)
     {
-        if(instance == null)
+        if(!test)
         {
-            synchronized (TransformersDatabase.class)
+            if (instance == null)
             {
-                if (instance == null)
+                synchronized (TransformersDatabase.class)
                 {
-                    instance =
-                            Room.databaseBuilder(context.getApplicationContext(),
-                                    TransformersDatabase.class, "transformes_db")
-                                    .fallbackToDestructiveMigration()
-                                    .allowMainThreadQueries()
-                                    .build();
+                    if (instance == null)
+                    {
+                        instance =
+                                Room.databaseBuilder(context.getApplicationContext(),
+                                        TransformersDatabase.class, "transformes_db")
+                                        .fallbackToDestructiveMigration()
+                                        .allowMainThreadQueries()
+                                        .build();
 
 
+                    }
                 }
             }
-        }
 
-        return instance;
+            return instance;
+        }
+        else
+        {
+            if (instanceTest == null)
+            {
+                synchronized (TransformersDatabase.class)
+                {
+                    if (instanceTest == null)
+                    {
+                        instanceTest =
+                                Room.databaseBuilder(context.getApplicationContext(),
+                                        TransformersDatabase.class, "transformes_test_db")
+                                        .fallbackToDestructiveMigration()
+                                        .allowMainThreadQueries()
+                                        .build();
+
+
+                    }
+                }
+            }
+
+            return instanceTest;
+        }
     }
 
 }

@@ -214,7 +214,7 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
         {
             if(editMode && result != null)
             {
-                mDatabaseRepository.update(result);
+                mDatabaseRepository.update(result,false);
 
                 if(result.getTeam().equals("A"))
                 {
@@ -229,7 +229,7 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
             }
             else if(!editMode && result!=null)
             {
-                Long ret = mDatabaseRepository.insert(result);
+                Long ret = mDatabaseRepository.insert(result,false);
                 if(ret >=0)
                     result.setSurrogateKey(ret.intValue());
 
@@ -276,7 +276,7 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
         if (code != 500)
         {
             model.setSurrogateKey(originalModel.getSurrogateKey());
-            mDatabaseRepository.updateWithId(model);
+            mDatabaseRepository.updateWithId(model,false);
             if(model.getTeam().equals("A"))
                 mAdapterAutobots.updateItem(originalModel, model);
             //add on top and scroll to there
@@ -369,10 +369,10 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     {
         if (code != 500)
         {
-            if (mDatabaseRepository.insertDiff(list))
+            if (mDatabaseRepository.insertDiff(list,false))
             {
-                mAdapterAutobots.setItems(mDatabaseRepository.getAutobots());
-                mAdapterDecepticons.setItems(mDatabaseRepository.getDecepticons());
+                mAdapterAutobots.setItems(mDatabaseRepository.getAutobots(false));
+                mAdapterDecepticons.setItems(mDatabaseRepository.getDecepticons(false));
             }
         }
 
@@ -445,8 +445,8 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-                mAdapterAutobots.setItems(mDatabaseRepository.getAutobots());
-                mAdapterDecepticons.setItems(mDatabaseRepository.getDecepticons());
+                mAdapterAutobots.setItems(mDatabaseRepository.getAutobots(false));
+                mAdapterDecepticons.setItems(mDatabaseRepository.getDecepticons(false));
 //            }
 //        }) .start();
 

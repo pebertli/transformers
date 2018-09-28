@@ -31,30 +31,30 @@ public class TransformerRepository
         this.mListener = mListener;
     }
 
-    public void insertAsync(final TransformerModel model)
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                model.setFlagInsert(true);
-                TransformersDatabase.getDatabase(mContext).transformerDao().insertTransformer(model);
-            }
-        }) .start();
-    }
+//    public void insertAsync(final TransformerModel model)
+//    {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                model.setFlagInsert(true);
+//                TransformersDatabase.getDatabase(mContext).transformerDao().insertTransformer(model);
+//            }
+//        }) .start();
+//    }
 
-    public Long insert(final TransformerModel model)
+    public Long insert(final TransformerModel model, boolean test)
     {
         model.setFlagInsert(true);
-        return TransformersDatabase.getDatabase(mContext).transformerDao().insertTransformer(model);
+        return TransformersDatabase.getDatabase(mContext, test).transformerDao().insertTransformer(model);
     }
 
-    public void updateWithId(final TransformerModel model)
+    public void updateWithId(final TransformerModel model, boolean test)
     {
         model.setFlagInsert(false);
-        TransformersDatabase.getDatabase(mContext).transformerDao().updateTransformer(model);
+        TransformersDatabase.getDatabase(mContext, test).transformerDao().updateTransformer(model);
     }
 
-    public void update(final TransformerModel model)
+    public void update(final TransformerModel model, boolean test)
     {
         if(model.getId() != null && !model.getId().isEmpty())
         {
@@ -67,45 +67,34 @@ public class TransformerRepository
             model.setFlagUpdate(false);
         }
 
-        TransformersDatabase.getDatabase(mContext).transformerDao().updateTransformer(model);
+        TransformersDatabase.getDatabase(mContext, test).transformerDao().updateTransformer(model);
     }
 
-    public void insertNewAsync(final List<TransformerModel> models)
+    public List<TransformerModel> getAll(boolean test)
     {
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//        instance.transformerDao().insertNewTransformers(models);
-//            }
-//        }) .start();
+        return TransformersDatabase.getDatabase(mContext, test).transformerDao().getAll();
     }
 
-    public List<TransformerModel> getAll()
+    public List<TransformerModel> getAutobots(boolean test)
     {
 
-        return TransformersDatabase.getDatabase(mContext).transformerDao().getAll();
+        return TransformersDatabase.getDatabase(mContext, test).transformerDao().getAutobots();
     }
 
-    public List<TransformerModel> getAutobots()
+    public List<TransformerModel> getDecepticons(boolean test)
     {
 
-        return TransformersDatabase.getDatabase(mContext).transformerDao().getAutobots();
+        return TransformersDatabase.getDatabase(mContext, test).transformerDao().getDecepticons();
     }
 
-    public List<TransformerModel> getDecepticons()
-    {
-
-        return TransformersDatabase.getDatabase(mContext).transformerDao().getDecepticons();
-    }
-
-    public void syncLocal(final List<TransformerModel> models)
+    public void syncLocal(final List<TransformerModel> models,final  boolean test)
     {
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-        List<TransformerModel> resultID = TransformersDatabase.getDatabase(mContext).transformerDao().getWithId();
+        List<TransformerModel> resultID = TransformersDatabase.getDatabase(mContext, test).transformerDao().getWithId();
         List<TransformerModel> diff = new ArrayList<>();
         for(TransformerModel t1 : models)
         {
@@ -122,7 +111,7 @@ public class TransformerRepository
                 diff.add(t1);
         }
 
-                TransformersDatabase.getDatabase(mContext).transformerDao().insertNewTransformers(diff);
+                TransformersDatabase.getDatabase(mContext, test).transformerDao().insertNewTransformers(diff);
 
                 if(mListener != null)
                     if(diff.isEmpty())
@@ -130,17 +119,17 @@ public class TransformerRepository
                                 ,null
                         );
                 else
-                    mListener.onSync(TransformersDatabase.getDatabase(mContext).transformerDao().getAutobots()
-                            ,TransformersDatabase.getDatabase(mContext).transformerDao().getDecepticons()
+                    mListener.onSync(TransformersDatabase.getDatabase(mContext, test).transformerDao().getAutobots()
+                            ,TransformersDatabase.getDatabase(mContext, test).transformerDao().getDecepticons()
                     );
             }
         }) .start();
     }
 
-    public boolean insertDiff(final List<TransformerModel> models)
+    public boolean insertDiff(final List<TransformerModel> models, boolean test)
     {
 
-                List<TransformerModel> resultID = TransformersDatabase.getDatabase(mContext).transformerDao().getWithId();
+                List<TransformerModel> resultID = TransformersDatabase.getDatabase(mContext, test).transformerDao().getWithId();
                 List<TransformerModel> diff = new ArrayList<>();
                 for(TransformerModel t1 : models)
                 {
@@ -160,7 +149,7 @@ public class TransformerRepository
                 if(diff.isEmpty())
                     return false;
 
-                TransformersDatabase.getDatabase(mContext).transformerDao().insertNewTransformers(diff);
+                TransformersDatabase.getDatabase(mContext, test).transformerDao().insertNewTransformers(diff);
                 return true;
     }
 
