@@ -13,7 +13,7 @@ import java.util.List;
 public class DatabaseTransformerTest
 {
     @Test
-    public void addTransformers()
+    public void insert_transformer_ok()
     {
         TransformerRepository rep = new TransformerRepository(InstrumentationRegistry.getTargetContext());
         long id = rep.insert(TransformerModel.randomTransformer("A"), true);
@@ -22,4 +22,5 @@ public class DatabaseTransformerTest
         Assert.assertEquals(id, ret.get(ret.size()-1).getSurrogateKey());
 
     }
+
 }

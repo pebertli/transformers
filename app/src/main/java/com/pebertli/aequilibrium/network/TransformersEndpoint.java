@@ -39,7 +39,7 @@ public interface TransformersEndpoint
     Call<ResponseBody> deleteTransformer(@Path("id") String id);
 
     @PUT("/transformers")
-    Call<ResponseBody> updateTransFormer(@Body TransformerModel transformer);
+    Call<TransformerModel> updateTransFormer(@Body TransformerModel transformer);
 
 
 }

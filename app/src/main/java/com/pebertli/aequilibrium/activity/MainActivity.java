@@ -8,10 +8,8 @@
 
 package com.pebertli.aequilibrium.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,7 +23,6 @@ import android.view.inputmethod.InputMethodManager;
 import com.google.gson.Gson;
 ;
 import com.pebertli.aequilibrium.database.TransformerRepository;
-import com.pebertli.aequilibrium.database.TransformersDatabase;
 import com.pebertli.aequilibrium.fragment.EditFragment;
 import com.pebertli.aequilibrium.R;
 import com.pebertli.aequilibrium.network.Session;
@@ -34,7 +31,6 @@ import com.pebertli.aequilibrium.model.TransformerModel;
 import com.pebertli.aequilibrium.network.TransformersAPI;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -122,10 +118,30 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     @Override
     public void deleteClicked(TransformerModel model, int itemIndex)
     {
-        if(model.getTeam().equals("A"))
-            mApi.deleteTransformer(mAdapterAutobots.getItem(itemIndex));
-        else if(model.getTeam().equals("D"))
-            mApi.deleteTransformer(mAdapterDecepticons.getItem(itemIndex));
+
+        //delete without api call, since there is no correspondence on REST database
+        if(model.isFlagInsert())
+        {
+            mDatabaseRepository.delete(model, false);
+        }
+        else
+        {
+            model.setFlagInsert(false);
+            model.setFlagDelete(true);
+            model.setFlagUpdate(false);
+            mDatabaseRepository.update(model, false);
+
+            if (model.getTeam().equals("A"))
+            {
+                mAdapterAutobots.removeItem(model);
+            } else if (model.getTeam().equals("D"))
+            {
+                mAdapterDecepticons.removeItem(model);
+            }
+
+            mApi.deleteTransformer(model);
+        }
+
     }
 
     /**
@@ -214,6 +230,9 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
         {
             if(editMode && result != null)
             {
+                result.setFlagInsert(false);
+                result.setFlagDelete(false);
+                result.setFlagUpdate(true);
                 mDatabaseRepository.update(result,false);
 
                 if(result.getTeam().equals("A"))
@@ -231,20 +250,21 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
             {
                 Long ret = mDatabaseRepository.insert(result,false);
                 if(ret >=0)
+                {
                     result.setSurrogateKey(ret.intValue());
 
-                if(result.getTeam().equals("A"))
-                {
-                    mAdapterAutobots.addItem(result);
-                    mRecyclerViewAutobots.smoothScrollToPosition(0);
-                }
-                else if(result.getTeam().equals("D"))
-                {
-                    mAdapterDecepticons.addItem(result);
-                    mRecyclerViewDecepticons.smoothScrollToPosition(0);
-                }
+                    if (result.getTeam().equals("A"))
+                    {
+                        mAdapterAutobots.addItem(result);
+                        mRecyclerViewAutobots.smoothScrollToPosition(0);
+                    } else if (result.getTeam().equals("D"))
+                    {
+                        mAdapterDecepticons.addItem(result);
+                        mRecyclerViewDecepticons.smoothScrollToPosition(0);
+                    }
 
-                mApi.addTransformer(result);
+                    mApi.addTransformer(result);
+                }
 
 //                //FragmentManager fm = getSupportFragmentManager();
 //                if(fm.getBackStackEntryCount() > 0)//there is a editFragment
@@ -275,10 +295,16 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     {
         if (code != 500)
         {
+            //model from rest came without surrogate key
             model.setSurrogateKey(originalModel.getSurrogateKey());
-            mDatabaseRepository.updateWithId(model,false);
+            model.setFlagInsert(false);
+            model.setFlagDelete(false);
+            model.setFlagUpdate(false);
+            mDatabaseRepository.update(model,false);
             if(model.getTeam().equals("A"))
                 mAdapterAutobots.updateItem(originalModel, model);
+            else if(model.getTeam().equals("D"))
+                mAdapterDecepticons.updateItem(originalModel, model);
             //add on top and scroll to there
 //            if(model.getTeam().equals("A"))
 //            {
@@ -315,14 +341,7 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
     {
         if(code != 500)
         {
-            if(model.getTeam().equals("A"))
-                mAdapterAutobots.removeItem(model);
-            else if(model.getTeam().equals("D"))
-                mAdapterDecepticons.removeItem(model);
-
-            //make sure that saves the new list
-            //todo SYNC with SQLite
-            saveListOnPreferences();
+            mDatabaseRepository.delete(model, false);
         }
     }
 
@@ -330,26 +349,46 @@ public class MainActivity extends FragmentActivity implements TransformersAPI.Ap
      * response from Rest API with a updated transformer
      */
     @Override
-    public void onUpdateResponse(TransformerModel originalModel, int code)
+    public void onUpdateResponse(TransformerModel originalModel, TransformerModel model, int code)
     {
         if (code != 500)
         {
-            if(originalModel.getTeam().equals("A"))
-                mAdapterAutobots.updateItem(originalModel, originalModel);
-            else if(originalModel.getTeam().equals("D"))
-                mAdapterDecepticons.updateItem(originalModel, originalModel);
+            //model from rest came without surrogate key
+            model.setSurrogateKey(originalModel.getSurrogateKey());
+            model.setFlagInsert(false);
+            model.setFlagDelete(false);
+            model.setFlagUpdate(false);
+            mDatabaseRepository.update(model, false);
+            if(model.getTeam().equals("A"))
+                mAdapterAutobots.updateItem(originalModel, model);
+            else if(model.getTeam().equals("D"))
+                mAdapterDecepticons.updateItem(originalModel, model);
+            //add on top and scroll to there
+//            if(model.getTeam().equals("A"))
+//            {
+//                mAdapterAutobots.addItem(model);
+//                mRecyclerViewAutobots.smoothScrollToPosition(0);
+//            }
+//            else if(model.getTeam().equals("D"))
+//            {
+//                mAdapterDecepticons.addItem(model);
+//                mRecyclerViewDecepticons.smoothScrollToPosition(0);
+//            }
+
+            //update the local database with the id and team icon received
 
             //make sure that saves the new list
             //todo SYNC with SQLite
-            saveListOnPreferences();
+//            saveListOnPreferences();
         }
 
-        FragmentManager fm = getSupportFragmentManager();
-        if(fm.getBackStackEntryCount() > 0)//there is a editFragment
-        {
-            //remove it from top
-            fm.popBackStack();
-        }
+        //remove the fragment after receives an API response
+//        FragmentManager fm = getSupportFragmentManager();
+//        if(fm.getBackStackEntryCount() > 0)//there is a editFragment
+//        {
+//            //remove it from top
+//            fm.popBackStack();
+//        }
     }
 
     /**
